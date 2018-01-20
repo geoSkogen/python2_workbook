@@ -1,0 +1,16 @@
+10 missing : after function declaration
+12 pop() not poop()
+17 missing endparenthesis for pop(index)
+55 & 56 arithmetic error--"this sould be five" should be six
+60 forward slash used for division--should be / not \
+66 equality sign used for assignment == instead of =
+66 hyphenated variable-name--should be underscore_seperated
+74 misspelled variable name, should be starting_point
+74 missing endparenthesis for method call
+77 unclear fix to three potential typos ("god",\t,"weight")
+84 method call preceded by a .
+87 sorted_words preceded by a prin
+89 missing the f in print_first_and_last()
+91 missing the nd in print_first_and_last_sorted
+91 misspelled argument--sentence not sentence
+91 unnecessary indent
