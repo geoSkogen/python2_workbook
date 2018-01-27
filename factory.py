@@ -15,12 +15,15 @@ def format_argv(arr) :
     else :
         return [1]
 
-arg_arr = format_argv(argv)
-result = atom_smasher(arg_arr)
-print result
+def init_smash() :
+    arg_arr = format_argv(argv)
+    result = atom_smasher(arg_arr)
+    print result
+    return result
+#init_smash()
 
+def keywordarg(mystr) :
+    print ("the oil is in the %s" % mystr)
+    return mystr
 
-
-
-
-  #result = atom_smasher(arg_arr)
+keywordarg(mystr = "drill")
