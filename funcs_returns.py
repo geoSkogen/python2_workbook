@@ -11,8 +11,8 @@ def divide(a, b):
     return  a/b
 
 def getInput(selectIn):
-    left = int(input("term 1 : "))
-    right = int(input("term 2 : "))
+    left = int(raw_input("term 1 : "))
+    right = int(raw_input("term 2 : "))
     if selectIn == "A":
         result = add(left, right)
         label = "sum"
@@ -31,7 +31,7 @@ def getInput(selectIn):
 def initInput():
     prompt = "> "
     print ("type A, S, M, or D")
-    selector = input(prompt)
+    selector = raw_input(prompt)
     if selector == "A" or selector == "S" or selector == "M" or selector == "D":
         getInput(selector)
     else:
