@@ -26,4 +26,18 @@ def keywordarg(mystr) :
     print ("the oil is in the %s" % mystr)
     return mystr
 
-keywordarg(mystr = "drill")
+#keywordarg(mystr = "drill")
+
+def overloader(arg1, *vartuple) :
+    counter = 0
+    print("this is arg1: %s" % arg1)
+    for elm in vartuple :
+        print("this is vartuple[%i]: %s" % (counter, elm))
+        counter += 1
+
+def calloverloader() :
+    title = "we are your overloaders"
+    data = []
+    overloader(title,"you","could","have","a","dream","about", "drowning","in","oil")
+
+#calloverloader()
