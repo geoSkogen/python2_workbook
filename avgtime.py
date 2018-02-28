@@ -53,44 +53,85 @@ def print_pretty(this_dict) :
                     print ("\t\t%s" % lostnode)
     return
 
-def find_paths(nodes) :
-    new_path = []
-    data_loader = {}
+def get_neighbors(node) :
+    node_name = str(node)
+    keys = []
+    for member in nodes[node_name].keys() :
+        if (member != "find") :
+            keys.append(member)
+    return keys
 
-    def path_back(node, destination) :
-        result = [[], False]
-        for nextnode_keyname in node.keys() :
-            if (nextnode_keyname != "find") :
-                if nextnode_keyname in nodes[destination].keys() :
-                    result[0].append(nextnode_keyname)
-                    result[0].append(node[nextnode_keyname])
-                    result[0].append(destination)
-                    result[0].append(nodes[destination][nextnode_keyname])
-                    result[1] = True
+def are_neighbors(start_node, end_node) :
+    result = False
+    node_name = str(start_node)
+    neighbors = get_neighbors(end_node)
+    if (node_name in neighbors) :
+        result = True
+    return result
+
+def force_path(start_node, end_node) :
+    path_report = []
+    format_data =  []
+    node_backtrace = [end_node]
+    node_home = [start_node]
+    from_home = False
+    index = -1
+
+    while (len(node_backtrace) >= 1) :
+        path_report = is_triad(start_node, end_node)
+        if (path_report[2] == True) :
+            format_data.append({path_report[1][0] : path_report[1][1]})
+            if (len(node_backtrace) == 1) :
+                format_data.append({path_report[1][2] : path_report[1][3]})
+                node_backtrace.pop()
+            else :
+                if (from_home == False) :
+                    from_home = True
+                    index = len(node_backtrace) - 1
+                    for path in get_neighbors(node_backtrace[index]) :
+                        end_node = path
                 else :
-                    for destination_keyname in nodes[str(destination)].keys() :
-                        if (destination_keyname != "find") :
-                            result[0].append(destination_keyname)
+                    from_home == False
+                    index = len(node_home) - 1
+                    for path in get_neighbors(node_home[index]) :
+                        start_node = path
+        else :
+            if (from_home == False) :
+                from_home = True
+                index = len(node_backtrace) - 1
+                for path in get_neighbors(node_backtrace[index]) :
+                    end_node = path
+            else :
+                from_home == False
+                index = len(node_home) - 1
+                for path in get_neighbors(node_home[index]) :
+                    start_node = path
+    return format_data
 
-        return result
+def is_triad(start_node, end_node) :
+    result = [[],[],False]
+    start_neighbors = get_neighbors(start_node)
+    end_neighbors = get_neighbors(end_node)
+    for middle_node in start_neighbors :
+       if (middle_node in end_neighbors) :
+           result[2] = True
+           result[0].append(str(start_node))
+           result[1].append(middle_node)
+           result[1].append(nodes[str(start_node)][middle_node])
+           result[1].append(str(end_node))
+           result[1].append(nodes[str(end_node)][middle_node])
+           break
+    if (result[2] == False) :
+        result[0] = start_neighbors
+        result[1] = end_neighbors
+    return result
 
-    for nodename in nodes :
-        new_path = []
-        for path in nodes[nodename]["find"] :
-            data_loader = {}
-            new_path = path_back(nodes[nodename], path)
-            if (new_path[1] == True) :
-                for i in range(len(new_path[0])-1) :
-                    if (isinstance(new_path[0][i],str)) :
-                        data_loader[new_path[0][i]] = new_path[0][i+1]
-            print ("\r\nstarting at: %s --- destination: %s" % (nodename, path))
-            print "path taken: ", new_path
-            print data_loader
-            
+def get_triads(nodes) :
+    report = []
+    for nodename in nodes.keys() :
+        for pathname in nodes[nodename]["find"] :
+            report = force_path(int(nodename),int(pathname))
+            print report
 
-    return nodes
-
-node_data = normalize_data(data1)
-print_pretty(node_data)
-data_set = find_paths(node_data)
-print data_set
+nodes = normalize_data(data1)
+get_triads(nodes)
