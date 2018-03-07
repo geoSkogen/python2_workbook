@@ -52,9 +52,26 @@ def normalize_data(data) :
     del new_node
     return node_objs
 
-data_set_1 = normalize_data(avgtime_data.data_set_1)
-nodes = avgtime_nodes.Nodes(data_set_1)
-pathfinder = avgtime_pathfinder.Pathfinder()
+def find_node_paths(nodes_obj, node_obj, connector) :
+    paths = []
+    for path_to in node_obj.find :
+        paths.append(connector.find_path(nodes_obj, node_obj.name, path_to))
+    return paths
+
+def main() :
+    temp_paths = []
+    data_set_1 = normalize_data(avgtime_data.data_set_1)
+    nodes = avgtime_nodes.Nodes(data_set_1)
+    pathfinder = avgtime_pathfinder.Pathfinder()
+    for node in nodes.data :
+        temp_paths.append(find_node_paths(nodes, node, pathfinder))
+    for i in range(len(temp_paths)-1) :
+        
+
+
+
+
+
 
 nodes.log_data()
 hello = pathfinder.find_path(nodes,1,3)
