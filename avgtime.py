@@ -3,6 +3,24 @@ import avgtime_node
 import avgtime_nodes
 import avgtime_pathfinder
 
+def log_data_error(code_no, data_arr) :
+
+    def redundant (data_arr) :
+        print "error at data list [%i] - first and second list members cannot be equal" % data_arr[0]
+
+    def zero (data_arr) :
+        print "error at data list [%i][%i] - list members cannot be less than or equal to zero" % (data_arr[0], data_arr[1])
+
+    def not_a_number (data_arr) :
+        print "error at data list [%i][%i] - list members must be integers" % (data_arr[0], data_arr[1])
+
+    def overflow (data_arr) :
+        print "error at data list [%i] - lists must contain exactly three integers" % data_arr[0]
+
+    options = {0: redundant, 1: zero, 2: not_a_number, 3: overflow}
+
+    options[code_no](data_arr)
+
 def normalize_data(data) :
     nodes = {}
     vals = []
@@ -10,8 +28,33 @@ def normalize_data(data) :
     find = []
     new_node = {}
     node_objs = [0]
+    inner_break = False
 
     for member in data :
+        for datum in member :
+            if (type(datum) != 'int') :
+                log_data_error(2, [data.index(member),member.index(datum)])
+                break
+                return False
+                inner_break = True
+            elif (datum <= 0) :
+                log_data_error(1, [data.index(member),member.index(datum)])
+                break
+                return False
+                inner_break = True
+        if (len(member) != 3) :
+            log_data_error(3, [data.index(member)])
+            break
+            return False
+        elif (member[0] == member[1]) :
+            log_data_error(0, [data.index(member)])
+            break
+            return False
+        elif (inner_break) :
+            break
+            return False
+
+
     #insert data validation here --- each member must a list of three numbers
         if (not member[0] in vals) :
             nodes[str(member[0])] = {}
@@ -38,7 +81,7 @@ def normalize_data(data) :
     for nodename in nodes.keys() :
         paths = []
         find = []
-        for keyname in nodes[nodename] :
+        for keyname in nodes[nodename].keys() :
             if (keyname != "find") :
                 paths.append([keyname,nodes[nodename][keyname]])
         find = nodes[nodename]["find"]
@@ -62,90 +105,14 @@ def main() :
     temp_paths = []
     data_set_1 = normalize_data(avgtime_data.data_set_1)
     nodes = avgtime_nodes.Nodes(data_set_1)
-    pathfinder = avgtime_pathfinder.Pathfinder()
-    for node in nodes.data :
-        temp_paths.append(find_node_paths(nodes, node, pathfinder))
-    for i in range(len(temp_paths)-1) :
-        
+    pathfinder = avgtime_pathfinder.Pathfinder(nodes)
+    nodes.log_data()
+    for i in range (1, len(nodes.data)) :
+        for find_me in nodes.data[i].find :
+            temp_paths = pathfinder.find_path(i,int(find_me))
+            print "nodename: ", i
+            print "testing_path_to: ", int(find_me)
+            print temp_paths
+    return nodes
 
-
-
-
-
-
-nodes.log_data()
-hello = pathfinder.find_path(nodes,1,3)
-hellno = pathfinder.find_path(nodes,1,9)
-print hello
-print hellno
-
-
-'''
-def force_path(start_node, end_node) :
-    path_logic_report = []
-    path_report = []
-    node_backtrace = [end_node]
-    node_home = [start_node]
-    from_home = False
-    error_report = []
-
-    path_report = is_triad(start_node, end_node)
-
-    def path_logic(path_report, from_home) :
-        format_data =  []
-        recourse = []
-        index = 0
-
-        def search_neighbors(this_bool, next_node, failed_node) :
-            search_report = []
-            this_bool = not this_bool
-            search_report.append([next_node, failed_node])
-            for path in get_neighbors(next_node) :
-                search_report.append(is_triad(path, failed_node))
-            return search_report
-
-        if (path_report[2] == False ) :
-            if (from_home == False) :
-                node_backtrace.append(end_node)
-                recourse.append(end_node)
-                recourse.append(search_neighbors(from_home, end_node, start_node))
-            else :
-                node_home.append(start_node)
-                recourse.append(start_node)
-                recourse.append(search_neighbors(from_home, start_node, end_node))
-        elif (path_report[2] == True) :
-            format_data.append({path_report[1][0] : path_report[1][1]})
-            if (len(node_backtrace) == 1 and len(node_home) == 1) :
-                format_data.append({path_report[1][2] : path_report[1][3]})
-                node_backtrace.pop()
-                node_home.pop()
-            else :
-                if (from_home == False) :
-                    from_home = True
-                    index = len(node_backtrace) - 1
-                    error_report.append(index)
-                    for path in get_neighbors(node_backtrace[index]) :
-                        path_report = is_triad(start_node, path)
-                        error_report.append(path_report)
-                else :
-                    from_home == False
-                    index = len(node_home) - 1
-                    for path in get_neighbors(node_home[index]) :
-                        path_report = is_triad(path, end_node)
-        return format_data
-    path_logic_report = path_logic(path_report, from_home)
-
-    return path_logic_report
-
-
-
-def get_triads(nodes) :
-    report = []
-    for nodename in nodes.keys() :
-        for pathname in nodes[nodename]["find"] :
-            report = force_path(int(nodename),int(pathname))
-            print report
-
-nodes = normalize_data(avgtime_data.data_set_1)
-get_triads(nodes)
-'''
+nodes = main()
