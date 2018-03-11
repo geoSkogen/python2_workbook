@@ -28,8 +28,8 @@ class Nodes :
                result[1][2] = str(end_node)
                result[1][3] = this[end_node].distance_index[middle_node]
                break
-        if (result[2] == False or self.are_neighbors(start_node, end_node)) :
+        if (result[2] == False or self.are_neighbors(start_node, end_node) or start_node == end_node) :
             result[0] = start_neighbors
             result[1] = end_neighbors
-            result[2] = False   
+            result[2] = False
         return result

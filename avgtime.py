@@ -21,6 +21,8 @@ def log_data_error(code_no, data_arr) :
 
     options[code_no](data_arr)
 
+    return True
+
 def normalize_data(data) :
     nodes = {}
     vals = []
@@ -29,71 +31,68 @@ def normalize_data(data) :
     new_node = {}
     node_objs = [0]
     inner_break = False
+    error = False
 
     for member in data :
         for datum in member :
-            if (type(datum) != 'int') :
-                log_data_error(2, [data.index(member),member.index(datum)])
+            if (type(datum) != type(int())) :
+                error = log_data_error(2, [data.index(member),member.index(datum)])
                 break
-                return False
                 inner_break = True
             elif (datum <= 0) :
-                log_data_error(1, [data.index(member),member.index(datum)])
+                error = log_data_error(1, [data.index(member),member.index(datum)])
                 break
-                return False
                 inner_break = True
         if (len(member) != 3) :
-            log_data_error(3, [data.index(member)])
+            error = log_data_error(3, [data.index(member)])
             break
-            return False
         elif (member[0] == member[1]) :
-            log_data_error(0, [data.index(member)])
+            error = log_data_error(0, [data.index(member)])
             break
-            return False
         elif (inner_break) :
             break
-            return False
+    if (error) :
+        return False
+    else :
+        for member in data :
+            if (not member[0] in vals) :
+                nodes[str(member[0])] = {}
+                vals.append(member[0])
+            if (not member[1] in vals) :
+                nodes[str(member[1])] = {}
+                vals.append(member[1])
+            nodes[str(member[0])][str(member[1])] = member[2]
+            nodes[str(member[1])][str(member[0])] = member[2]
 
+        for node in nodes.keys() :
+            node_objs.append({})
+            paths = [int(node)]
+            find = []
+            for connected_node in nodes[node].keys() :
+                if connected_node != "find" :
+                    paths.append(int(connected_node))
+                    #print ("node %s is connected to node %s by a distance of %i units" % (node, connected_node, nodes[node][connected_node]))
+            for i in vals :
+                if (not i in paths) :
+                    find.append(str(i))
+            nodes[node]["find"] = find
 
-    #insert data validation here --- each member must a list of three numbers
-        if (not member[0] in vals) :
-            nodes[str(member[0])] = {}
-            vals.append(member[0])
-        if (not member[1] in vals) :
-            nodes[str(member[1])] = {}
-            vals.append(member[1])
-        nodes[str(member[0])][str(member[1])] = member[2]
-        nodes[str(member[1])][str(member[0])] = member[2]
-
-    for node in nodes.keys() :
-        node_objs.append({})
-        paths = [int(node)]
-        find = []
-        for connected_node in nodes[node].keys() :
-            if connected_node != "find" :
-                paths.append(int(connected_node))
-                #print ("node %s is connected to node %s by a distance of %i units" % (node, connected_node, nodes[node][connected_node]))
-        for i in vals :
-            if (not i in paths) :
-                find.append(str(i))
-        nodes[node]["find"] = find
-
-    for nodename in nodes.keys() :
-        paths = []
-        find = []
-        for keyname in nodes[nodename].keys() :
-            if (keyname != "find") :
-                paths.append([keyname,nodes[nodename][keyname]])
-        find = nodes[nodename]["find"]
-        new_node = avgtime_node.Node(nodename, paths, find)
-        node_objs[int(nodename)] = new_node
-        #new_node.report()
-    del nodes
-    del paths
-    del find
-    del vals
-    del new_node
-    return node_objs
+        for nodename in nodes.keys() :
+            paths = []
+            find = []
+            for keyname in nodes[nodename].keys() :
+                if (keyname != "find") :
+                    paths.append([keyname,nodes[nodename][keyname]])
+            find = nodes[nodename]["find"]
+            new_node = avgtime_node.Node(nodename, paths, find)
+            node_objs[int(nodename)] = new_node
+            #new_node.report()
+        del nodes
+        del paths
+        del find
+        del vals
+        del new_node
+        return node_objs
 
 def find_node_paths(nodes_obj, node_obj, connector) :
     paths = []
