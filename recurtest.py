@@ -1,7 +1,8 @@
 def call_me(arg) :
-    arg -= 1
+
     print arg
     while (arg > 0) :
+        arg -= 1
         call_me(arg)
 
-call_me(10)         
+call_me(2)

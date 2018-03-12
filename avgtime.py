@@ -23,16 +23,9 @@ def log_data_error(code_no, data_arr) :
 
     return True
 
-def normalize_data(data) :
-    nodes = {}
-    vals = []
-    paths = []
-    find = []
-    new_node = {}
-    node_objs = [0]
-    inner_break = False
+def validate_data(data) :
     error = False
-
+    inner_break = False
     for member in data :
         for datum in member :
             if (type(datum) != type(int())) :
@@ -51,48 +44,58 @@ def normalize_data(data) :
             break
         elif (inner_break) :
             break
-    if (error) :
-        return False
-    else :
-        for member in data :
-            if (not member[0] in vals) :
-                nodes[str(member[0])] = {}
-                vals.append(member[0])
-            if (not member[1] in vals) :
-                nodes[str(member[1])] = {}
-                vals.append(member[1])
-            nodes[str(member[0])][str(member[1])] = member[2]
-            nodes[str(member[1])][str(member[0])] = member[2]
+    return error
 
-        for node in nodes.keys() :
-            node_objs.append({})
-            paths = [int(node)]
-            find = []
-            for connected_node in nodes[node].keys() :
-                if connected_node != "find" :
-                    paths.append(int(connected_node))
-                    #print ("node %s is connected to node %s by a distance of %i units" % (node, connected_node, nodes[node][connected_node]))
-            for i in vals :
-                if (not i in paths) :
-                    find.append(str(i))
-            nodes[node]["find"] = find
 
-        for nodename in nodes.keys() :
-            paths = []
-            find = []
-            for keyname in nodes[nodename].keys() :
-                if (keyname != "find") :
-                    paths.append([keyname,nodes[nodename][keyname]])
-            find = nodes[nodename]["find"]
-            new_node = avgtime_node.Node(nodename, paths, find)
-            node_objs[int(nodename)] = new_node
-            #new_node.report()
-        del nodes
-        del paths
-        del find
-        del vals
-        del new_node
-        return node_objs
+def normalize_data(data) :
+    nodes = {}
+    vals = []
+    paths = []
+    find = []
+    new_node = {}
+    node_objs = [0]
+    
+    for member in data :
+        if (not member[0] in vals) :
+            nodes[str(member[0])] = {}
+            vals.append(member[0])
+        if (not member[1] in vals) :
+            nodes[str(member[1])] = {}
+            vals.append(member[1])
+        nodes[str(member[0])][str(member[1])] = member[2]
+        nodes[str(member[1])][str(member[0])] = member[2]
+
+    for node in nodes.keys() :
+        node_objs.append({})
+        paths = [int(node)]
+        find = []
+        for connected_node in nodes[node].keys() :
+            if connected_node != "find" :
+                paths.append(int(connected_node))
+                #print ("node %s is connected to node %s by a distance of %i units" % (node, connected_node, nodes[node][connected_node]))
+        for i in vals :
+            if (not i in paths) :
+                find.append(str(i))
+        nodes[node]["find"] = find
+
+    for nodename in nodes.keys() :
+        paths = []
+        find = []
+        for keyname in nodes[nodename].keys() :
+            if (keyname != "find") :
+                paths.append([keyname,nodes[nodename][keyname]])
+        find = nodes[nodename]["find"]
+        new_node = avgtime_node.Node(nodename, paths, find)
+        node_objs[int(nodename)] = new_node
+        #new_node.report()
+    del nodes
+    del paths
+    del find
+    del vals
+    del new_node
+    return node_objs
+
+
 
 def find_node_paths(nodes_obj, node_obj, connector) :
     paths = []
@@ -102,16 +105,23 @@ def find_node_paths(nodes_obj, node_obj, connector) :
 
 def main() :
     temp_paths = []
-    data_set_1 = normalize_data(avgtime_data.data_set_1)
-    nodes = avgtime_nodes.Nodes(data_set_1)
-    pathfinder = avgtime_pathfinder.Pathfinder(nodes)
-    nodes.log_data()
-    for i in range (1, len(nodes.data)) :
-        for find_me in nodes.data[i].find :
-            temp_paths = pathfinder.find_path(i,int(find_me))
-            print "nodename: ", i
-            print "testing_path_to: ", int(find_me)
-            print temp_paths
-    return nodes
+    data_set_1 = []
+    nodes = []
+    pathfinder = {}
+    data_error = validate_data(avgtime_data.data_set_1)
+    if (data_error) :
+        return False
+    else :
+        data_set_1 = normalize_data(avgtime_data.data_set_1)
+        nodes = avgtime_nodes.Nodes(data_set_1)
+        pathfinder = avgtime_pathfinder.Pathfinder(nodes)
+        nodes.log_data()
+        for i in range (1, len(nodes.data)) :
+            for find_me in nodes.data[i].find :
+                temp_paths = pathfinder.find_path(i,int(find_me))
+                print "nodename: ", i
+                print "testing_path_to: ", int(find_me)
+                print temp_paths
+        return nodes
 
 nodes = main()
