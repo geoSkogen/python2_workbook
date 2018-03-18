@@ -46,6 +46,7 @@ class Pathfinder() :
                 self.reset()
         else :
             []
+        
             '''
             if (self.from_home) :
                 path_logic(nodes.data[start_node], nodes.data[end_node])
