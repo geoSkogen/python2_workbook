@@ -4,8 +4,9 @@ class Pathfinder() :
         self.smart_data = smart_data
         self.foretrace = []
         self.backtrace = []
+        self.path = []
 
-    def assemble_path(self, last_report) :
+    def format_triad(self, last_report) :
         key_val = {}
         key_val_end = {}
         data = []
@@ -15,44 +16,63 @@ class Pathfinder() :
         data.append(key_val_end)
         return data
 
-    def path_logic(self, failed_node, static_node, this_bool) :
+    def assoc_path(self, true_report) :
         report = []
-
-        for neighbor in failed_node.neighbors :
-            if (self.from_home) :
-                report = self.smart_data.is_triad(neighbor, static_node)
-            else :
-                report = self.smart_data.is_triad(static_node, neighbor)
-            if (report[2] == True) :
-                self.assemble_path(report)
-                break
+        stage_datum = []
+        print "backtrace: ", self.backtrace
+        print "foretrace: ", self.foretrace
+        print "true_report: ", true_report
+        self.reset()
         return report
 
-    def find_path(self, start_node, end_node) :
+    def path_logic(self, test_node_neighbors, control_nodes) :
+        path_logic_report = []
+        inner_break = False
+        for neighbor_name in test_node_neighbors :
+            for control_node in control_nodes :
+                path_logic_report = self.smart_data.is_triad(int(control_node),int(neighbor_name))
+                print ("is_triad(%i,%i)" % (int(control_node),int(neighbor_name)))
+                print "log_path_logic_report: ", path_logic_report
+                if (path_logic_report[2]) :
+                    self.assoc_path(path_logic_report)
+                    inner_break = True
+                    break
+            if (inner_break) :
+                break
+        return path_logic_report
+
+    def find_path(self, home_node, goal_node) :
         formatted_data = []
-        self.path = []
-        self.foretrace = []
-        self.backtrace = []
-        self.foretrace.append(end_node)
-        self.backtrace.append(start_node)
-        path_report = self.smart_data.is_triad(start_node, end_node)
-        if (path_report[2] == True) :
-            formatted_data = self.assemble_path(path_report)
-            if (len(self.foretrace) > 1 and len(self.backtrace) > 1) :
-                []
-            else :
-                self.foretrace.pop()
-                self.backtrace.pop()
-                self.reset()
+        path_report = []
+        self.backtrace.append([str(home_node)])
+        self.foretrace.append([str(goal_node)])
+        path_report = self.smart_data.is_triad(home_node, goal_node)
+        print "log_first_find_path_report: ", path_report
+        if (self.smart_data.are_neighbors(home_node, goal_node)) :
+            formatted_data = [{str(goal_node):self.smart_data.data[home_node].distance_index[str(goal_node)]}]
+            return formatted_data
+        if (path_report[2]) :
+            self.foretrace.pop()
+            self.backtrace.pop()
+            formatted_data = self.format_triad(path_report)
+            self.reset()
         else :
-            []
-        
-            '''
-            if (self.from_home) :
-                path_logic(nodes.data[start_node], nodes.data[end_node])
-            else :
-                path_logic(end_node, start_node)
-            '''
+            while (len(self.backtrace) >= 1 and len(self.foretrace) >=1) :
+                if (self.from_home) :
+                    print "backtrace_appending_home_neighbors: ", path_report[1]
+                    print "from_home: ", self.from_home
+                    print "log_toggling_path_report:", path_report
+                    self.toggle_direction()
+                    self.backtrace.append(path_report[1])
+                    path_report = self.path_logic(self.foretrace[-1], self.backtrace[-1])
+                else :
+                    print "foretrace_appending_goal_neighbors: ", path_report[1]
+                    print "from_home: ", self.from_home
+                    print "log_toggling_path_report:", path_report
+                    self.toggle_direction()
+                    self.foretrace.append(path_report[1])
+                    path_report = self.path_logic(self.backtrace[-1], self.foretrace[-1])
+        print "path_report:"
         print path_report
         return formatted_data
 
@@ -62,4 +82,5 @@ class Pathfinder() :
     def reset(self) :
         self.foretrace = []
         self.backtrace = []
+        self.path = []
         self.from_home = False

@@ -20,9 +20,9 @@ def main() :
         nodes.log_data()
         for i in range (1, len(nodes.data)) :
             for find_me in nodes.data[i].find :
-                temp_paths = pathfinder.find_path(i,int(find_me))
-                print "nodename: ", i
+                print "\r\nnodename: ", i
                 print "testing_path_to: ", int(find_me)
+                temp_paths = pathfinder.find_path(i,int(find_me))
                 print temp_paths
         return nodes
 
