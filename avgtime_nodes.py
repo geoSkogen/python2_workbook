@@ -7,6 +7,12 @@ class Nodes :
             print "\r\n%s" % self.data[i].name
             for keyname in self.data[i].distance_index.keys() :
                 print ("\t%s:  %i" % (keyname, self.data[i].distance_index[keyname]))
+    def is_node(self,int1) :
+        if (type(int1) != int) :
+            return False
+        if (int1 >= len(self.data) or int1 <= 0) :
+            return False
+        return True
 
     def are_neighbors(self, int1, int2) :
         result = False

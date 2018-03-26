@@ -47,11 +47,13 @@ def validate_data(data) :
 def normalize_data(data) :
     nodes = {}
     vals = []
+    novals = []
     paths = []
     find = []
     new_node = {}
     node_objs = [0]
-
+    #ensures that each data point becomes a unique instance in the data set
+    #and that each connected (neighboring) data point is added as a property
     for member in data :
         if (not member[0] in vals) :
             nodes[str(member[0])] = {}
@@ -62,19 +64,28 @@ def normalize_data(data) :
         nodes[str(member[0])][str(member[1])] = member[2]
         nodes[str(member[1])][str(member[0])] = member[2]
 
+    #checks if values are missing
+    '''
+    for i in range(len(vals)) :
+        if (i not in vals) :
+            novals.append(i)
+    '''
+    #populates a list of data-point case-numbers and an array of empty objects
     for node in nodes.keys() :
         node_objs.append({})
         paths = [int(node)]
         find = []
+        #populates a list of connected (neighboring) data points for each data point
         for connected_node in nodes[node].keys() :
             if connected_node != "find" :
                 paths.append(int(connected_node))
                 #print ("node %s is connected to node %s by a distance of %i units" % (node, connected_node, nodes[node][connected_node]))
+        #deduces a list on not-yet-located data points called .find
         for i in vals :
             if (not i in paths) :
                 find.append(str(i))
         nodes[node]["find"] = find
-
+    #converts key-value pairs into two-dimensional indexed array to pass to object constructor
     for nodename in nodes.keys() :
         paths = []
         find = []
@@ -91,3 +102,5 @@ def normalize_data(data) :
     del vals
     del new_node
     return node_objs
+    #return nodes
+    #return novals

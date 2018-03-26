@@ -19,9 +19,14 @@ class Pathfinder() :
     def assoc_path(self, true_report) :
         report = []
         stage_datum = []
+        home_node = self.backtrace[0][0]
+        goal_node = self.foretrace[0][0]
+        central_triad = [true_report[0],int(true_report[1][0]),int(true_report[1][2])]
+
         print "backtrace: ", self.backtrace
         print "foretrace: ", self.foretrace
         print "true_report: ", true_report
+        print "central_triad: ", central_triad
         self.reset()
         return report
 
