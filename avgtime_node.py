@@ -5,6 +5,7 @@ class Node :
         self.find = []
         self.name = str(name)
         self.find = find
+        self.node_score = len(neighbor_data)
         for neighbor in neighbor_data :
             self.neighbors.append(str(neighbor[0]))
             self.distance_index[str(neighbor[0])] = neighbor[1]
