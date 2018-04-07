@@ -7,7 +7,7 @@ import avgtime_map
 import avgtime_pathfinder
 
 def main() :
-    temp_paths = []
+    result = {}
     data_set_1 = []
     nodes = []
     map = {}
@@ -33,6 +33,7 @@ def main() :
                 temp_paths = pathfinder.find_path(i,int(find_me))
                 print temp_paths
         '''
-        return nodes
+        result = {"nodes" : nodes, "map" : map, "pathfinder" : pathfinder}
+        return result
         #return data_set_1
-nodes = main()
+avgtime = main()

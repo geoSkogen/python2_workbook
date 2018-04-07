@@ -25,13 +25,21 @@ class Map :
             elif (datum.node_score >= self.hub_score) :
                 self.hubs[str(i)] = datum
         for hubkeyname in self.hubs.keys() :
+            self.hub_net[hubkeyname] = []
             for neighbor in self.hubs[hubkeyname].neighbors :
                 if (neighbor not in self.hub_suburbs.keys() and neighbor not in self.dead_ends.keys()) :
                     self.hub_suburbs[neighbor] = data[int(neighbor)]
+                if (neighbor in self.hubs) :
+                    self.hub_net[hubkeyname].append(neighbor)
 
     def log_data(self) :
         print "\thubs:"
         print self.hubs.keys()
+        print "\thub_net:"
+        for keyname in self.hub_net.keys() :
+            print "\t%s:" % keyname;
+            for datum in self.hub_net[keyname] :
+                print "\t\t%s" % datum
         print "\thub_suburbs:"
         print self.hub_suburbs.keys()
         print "\tbranches:"

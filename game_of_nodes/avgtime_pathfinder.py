@@ -7,6 +7,32 @@ class Pathfinder() :
         self.backtrace = []
         self.path = []
 
+    def force_path(self, switch_index, start_node, end_node) :
+        nodes = self.smart_data
+        result = []
+        switch_options = [
+            [[],[],False],
+            [[],[],False],
+            nodes.are_neighbors,
+            nodes.is_triad,
+            nodes.is_quatrain,
+            nodes.is_quintrain
+            ]
+        result = switch_options[switch_index](start_node, end_node)
+        return result
+
+    def call_path(self, start_node, end_node) :
+        result = []
+        for i in range (2,5) :
+            result = self.force_path(i, start_node, end_node)
+            if (i == 2) :
+                if (result == True) :
+                    break
+            else :
+                if (result[2] == True) :
+                    break
+        return result
+    '''
     def format_triad(self, last_report) :
         key_val = {}
         key_val_end = {}
@@ -81,7 +107,7 @@ class Pathfinder() :
         print "path_report:"
         print path_report
         return formatted_data
-
+    '''
     def toggle_direction(self) :
         self.from_home = not self.from_home
 
