@@ -27,10 +27,13 @@ class Nodes :
         return True
 
     def are_neighbors(self, int1, int2) :
-        result = False
+        result = [[],[],False]
         if (self.is_node(int1) and self.is_node(int2)) :
             if str(int2) in self.data[int1].neighbors :
-                result = True
+                result[0] = str(int1)
+                result[1].append(str(int2))
+                result[1].append(self.data[int1].distance_index[str(int2)])
+                result[2] = True
         return result
 
     def is_triad(self, start_node, end_node) :

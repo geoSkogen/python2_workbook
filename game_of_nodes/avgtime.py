@@ -26,6 +26,14 @@ def main() :
         nodes.log_data()
         map.log_data()
         '''
+        for hub in map.hubs :
+            for branch in map.branches :
+                print "\r\nhubname: %s " % hub
+                print "testing_path_to: %s " % branch
+                temp_paths = pathfinder.find_path(int(hub),int(branch))
+                print temp_paths
+        '''        
+        '''
         for i in range (1, len(nodes.data)) :
             for find_me in nodes.data[i].find :
                 print "\r\nnodename: ", i
